@@ -54,7 +54,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
 pp = down_load_proxy()
 if not os.path.exists('D://ss'):  # 判断是否存在，如果不存在那么新建
     os.mkdir('D://ss')
-for j in range(9166, 9186, 1):
+for j in range(8886, 8986, 1):
     max_num = get_every_max(url, str(j))
     if max_num == 0:
         continue

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, requests
+import os, requests, re
 from bs4 import BeautifulSoup
 
 user_agents = [
@@ -33,8 +33,15 @@ def get_every_max(url, url_num):
     content = requests.get(url + url_num + '/' + url_num + '_1.html', headers=headers)
     if content.status_code == 200:
         title = str(BeautifulSoup(content.text, "html.parser").title)
-        if title is None:
+        if title is None or not reg_title(title):
             return 0
         return int(title.split('/')[1].split(")")[0])
     else:
         return 0
+
+
+def reg_title(title):  # 判断是否存在该格式的内容，否则无法解析
+    if title is None:
+        return False
+    reg = re.compile(r'\([1-9]+/[1-9]+\)')
+    return reg.findall(title)
