@@ -26,7 +26,7 @@ def get_dir_size(dir):
     size = 0
     for root, dirs, files in os.walk(dir):
         size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
-    return size / 8 / 1024 / 1024
+    return size / 1024 / 1024
 
 
 def get_every_max(url, url_num):
