@@ -12,7 +12,7 @@ headers = {
 def down_load_proxy():
     ll = []
     with open('proxy.txt', 'w') as of:
-        for page in range(1, 3):
+        for page in range(1, 2):
             url = 'http://www.xicidaili.com/nn/%s' % page
             doc = requests.get(url, headers=headers).text
             soup = BeautifulSoup(doc,"html.parser")

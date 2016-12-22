@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import os,requests
+import os, requests
 from bs4 import BeautifulSoup
-
 
 user_agents = [
     'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50',
@@ -27,10 +26,15 @@ def get_dir_size(dir):
     size = 0
     for root, dirs, files in os.walk(dir):
         size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
-    return size / 8 / 1024
+    return size / 8 / 1024 / 1024
 
 
 def get_every_max(url, url_num):
-    content = requests.get(url + url_num + '/' + url_num + '_1.html', headers=headers).text
-    title = str(BeautifulSoup(content, "html.parser").title)
-    return int(title.split('/')[1].split(")")[0])
+    content = requests.get(url + url_num + '/' + url_num + '_1.html', headers=headers)
+    if content.status_code == 200:
+        title = str(BeautifulSoup(content.text, "html.parser").title)
+        if title is None:
+            return 0
+        return int(title.split('/')[1].split(")")[0])
+    else:
+        return 0

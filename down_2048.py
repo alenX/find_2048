@@ -3,7 +3,7 @@ import requests, time
 import random
 import os
 from bs4 import BeautifulSoup
-from Utils import get_dir_size, get_every_max,user_agents
+from Utils import get_dir_size, get_every_max, user_agents
 from down_proxy import down_load_proxy
 
 url = 'http://www.youzi4.cc/mm/'
@@ -31,7 +31,8 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
             r = requests.get(pic, headers=headers)
             # time.sleep(random.randint(1, 3))
             if r.status_code == 200:
-                if os.path.exists('D://ss') and get_dir_size('D://ss') < 100:
+                if get_dir_size('D://ss') < 100:
+                    # print(pic)
                     with open('D://ss//' + pic.split('/')[-1], "wb") as p:
                         for chunk in r.iter_content(chunk_size=1024):
                             if chunk:
@@ -51,8 +52,12 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
 
 
 pp = down_load_proxy()
-for j in range(1000, 1024, 1):
+if not os.path.exists('D://ss'):  # 判断是否存在，如果不存在那么新建
+    os.mkdir('D://ss')
+for j in range(9166, 9186, 1):
     max_num = get_every_max(url, str(j))
+    if max_num == 0:
+        continue
     start = time.clock()
     for i in range(1, max_num + 1):
         proxies = {"http": pp[random.randint(0, len(pp) - 1)]}
