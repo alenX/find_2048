@@ -9,6 +9,7 @@ from down_proxy import down_load_proxy
 url = 'http://www.youzi4.cc/mm/'
 count_num = 3
 request_time_out = 10
+local_dir='I://ss'
 
 
 def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=0, request_time_out=10):
@@ -32,9 +33,9 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
             r = requests.get(pic, headers=headers, timeout=request_time_out)
             # time.sleep(random.randint(1, 3))
             if r.status_code == 200:
-                if get_dir_size('D://ss') < 1000:
+                if get_dir_size(local_dir) < 1000:
                     # print(pic)
-                    with open('D://ss//' + pic.split('/')[-1], "wb") as p:
+                    with open(local_dir+'//' + pic.split('/')[-1], "wb") as p:
                         for chunk in r.iter_content(chunk_size=1024):
                             if chunk:
                                 p.write(chunk)
@@ -56,24 +57,24 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                 r = requests.get(pic, headers=headers, proxies=proxies, timeout=request_time_out)
                 # time.sleep(random.randint(1, 3))
                 if r.status_code == 200:
-                    if get_dir_size('D://ss') < 1000:
+                    if get_dir_size(local_dir) < 60000:
                         # print(pic)
-                        with open('D://ss//' + pic.split('/')[-1], "wb") as p:
+                        with open(local_dir+'//' + pic.split('/')[-1], "wb") as p:
                             for chunk in r.iter_content(chunk_size=1024):
                                 if chunk:
                                     p.write(chunk)
                                     p.flush()
                             p.close()
             except:
-                parse_child_page(url, child_num, proxies, False, try_time + 1)
+                parse_child_page(url, child_num, proxies, False, try_time + 1,request_time_out)
         else:
             print('无法下载')
 
 
 pp = down_load_proxy()
-if not os.path.exists('D://ss'):  # 判断是否存在，如果不存在那么新建
-    os.mkdir('D://ss')
-for j in range(7601, 7626, 1):
+if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
+    os.mkdir(local_dir)
+for j in range(1000, 9999, 1):
     max_num = get_every_max(url, str(j))
     if max_num == 0:
         continue
