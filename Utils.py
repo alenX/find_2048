@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, requests, re
+import os, requests, re,random
 from bs4 import BeautifulSoup
 
 user_agents = [
@@ -18,7 +18,7 @@ user_agents = [
 headers = {
     'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",
     'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    'Accept-Encoding': 'gzip',
+    'Accept-Encoding': 'gzip'
 }
 
 
@@ -30,7 +30,10 @@ def get_dir_size(dir):
 
 
 def get_every_max(url, url_num):
-    content = requests.get(url + url_num + '/' + url_num + '_1.html', headers=headers)
+    content = requests.get(url + url_num + '/' + url_num + '_1.html', headers={
+        'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
+        'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        'Accept-Encoding': 'gzip'})
     if content.status_code == 200:
         title = str(BeautifulSoup(content.text, "html.parser").title)
         if title is None or not reg_title(title):

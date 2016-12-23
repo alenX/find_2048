@@ -25,7 +25,7 @@ def down_load_proxy():
         ll=[]
     with open('proxy.txt', 'w') as of:
         of.write('%s\n' % (datetime.datetime.now().strftime('%x')))
-        for page in range(1, 2):
+        for page in range(2, 3):
             url = 'http://www.xicidaili.com/nn/%s' % page
             doc = requests.get(url, headers=headers, timeout=5).text
             soup = BeautifulSoup(doc, "html.parser")
