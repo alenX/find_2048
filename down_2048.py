@@ -8,9 +8,10 @@ from down_proxy import down_load_proxy
 
 url = 'http://www.youzi4.cc/mm/'
 count_num = 3
+request_time_out = 10
 
 
-def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=0):
+def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=0, request_time_out=10):
     if url == '' or url is None:
         print('地址格式不符合')
         return
@@ -20,7 +21,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
         'Referer': 'http://www.youzi4.cc/'}
     if not proxy_flag:
         try:
-            child_doc = requests.get(url_new, headers=headers).text
+            child_doc = requests.get(url_new, headers=headers, timeout=request_time_out).text
             # time.sleep(random.randint(1, 3))
             child_soup = BeautifulSoup(child_doc, "html.parser")
             print(child_soup.img)
@@ -28,7 +29,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
             headers = {
                 'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
                 'Referer': 'http://www.youzi4.cc/'}
-            r = requests.get(pic, headers=headers)
+            r = requests.get(pic, headers=headers, timeout=request_time_out)
             # time.sleep(random.randint(1, 3))
             if r.status_code == 200:
                 if get_dir_size('D://ss') < 1000:
@@ -40,11 +41,11 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                                 p.flush()
                         p.close()
         except:
-            parse_child_page(url, child_num, proxies, True, try_time)
+            parse_child_page(url, child_num, proxies, True, try_time, request_time_out)
     else:
         if try_time < count_num:
             try:
-                child_doc = requests.get(url_new, headers=headers, proxies=proxies).text
+                child_doc = requests.get(url_new, headers=headers, proxies=proxies, timeout=request_time_out).text
                 # time.sleep(random.randint(1, 3))
                 child_soup = BeautifulSoup(child_doc, "html.parser")
                 print(child_soup.img)
@@ -52,7 +53,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                 headers = {
                     'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
                     'Referer': 'http://www.youzi4.cc/'}
-                r = requests.get(pic, headers=headers, proxies=proxies)
+                r = requests.get(pic, headers=headers, proxies=proxies, timeout=request_time_out)
                 # time.sleep(random.randint(1, 3))
                 if r.status_code == 200:
                     if get_dir_size('D://ss') < 1000:
@@ -72,12 +73,13 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
 pp = down_load_proxy()
 if not os.path.exists('D://ss'):  # 判断是否存在，如果不存在那么新建
     os.mkdir('D://ss')
-for j in range(6001, 6006, 1):
+for j in range(7601, 7626, 1):
     max_num = get_every_max(url, str(j))
     if max_num == 0:
         continue
     start = time.clock()
     for i in range(1, max_num + 1):
         proxies = {"http": pp[random.randint(0, len(pp) - 1)]}
-        parse_child_page(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False)
+        parse_child_page(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False,
+                         request_time_out=10)
     print(time.clock() - start)
