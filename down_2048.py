@@ -50,7 +50,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                 child_doc = requests.get(url_new, headers=headers, proxies=proxies, timeout=request_time_out).text
                 # time.sleep(random.randint(1, 3))
                 child_soup = BeautifulSoup(child_doc, "html.parser")
-                print(child_soup.img)
+                print('尝试次数==='+str(try_time)+child_soup.img)
                 pic = str(child_soup.img.get('src'))
                 headers = {
                     'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
