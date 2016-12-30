@@ -10,7 +10,7 @@ from threading import Thread
 url = 'http://www.youzi4.cc/mm/'
 count_num = 3
 request_time_out = 10
-local_dir = 'I://ss'
+local_dir = 'F://ss'
 
 
 def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=0, request_time_out=10):
@@ -90,31 +90,19 @@ if __name__ == '__main__':
     pp = down_load_proxy()
     if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
         os.mkdir(local_dir)
-    for j in range(1000, 9999, 1):
+    for j in range(8607, 9006, 1):
         max_num = get_every_max(url, str(j))
         if max_num == 0:
             continue
         start = time.clock()
+        threads = []
         for i in range(1, max_num + 1):
             proxies = {"http": pp[random.randint(0, len(pp) - 1)]}
-            parse_child_page(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False,
+            t = down_img_thread(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False,
                              request_time_out=10)
+            t.start()
+            threads.append(t)
+            # parse_child_page()
+        for t in threads:
+            t.join()
         print(time.clock() - start)
-    # pp = down_load_proxy()
-    # if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
-    #     os.mkdir(local_dir)
-    # for j in range(7201, 7206, 1):
-    #     max_num = get_every_max(url, str(j),{"http": pp[random.randint(0, len(pp) - 1)]})
-    #     threads = []
-    #     if max_num == 0:
-    #         continue
-    #     start = time.clock()
-    #     for i in range(1, max_num + 1):
-    #         proxies = {"http": pp[random.randint(0, len(pp) - 1)]}
-    #         t = down_img_thread(url + str(j) + '/' + str(j) + '_', i, proxies, True, request_time_out)
-    #         threads.append(t)
-    #         time.sleep(1)
-    #         t.start()
-    #     for th in threads:
-    #         th.join()
-    #     print(time.clock() - start)
