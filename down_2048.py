@@ -8,7 +8,7 @@ from down_proxy import down_load_proxy
 from threading import Thread
 
 url = 'http://www.youzi4.cc/mm/'
-count_num = 2
+count_num = 3
 request_time_out = 10
 local_dir = 'D://ss'
 
@@ -28,6 +28,8 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
             child_soup = BeautifulSoup(child_doc, "html.parser")
             print(child_soup.img)
             pic = str(child_soup.img.get('src'))
+            if pic.lower().endswith('.gif'):
+                return
             headers = {
                 'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
                 'Referer': 'http://www.youzi4.cc/'}
@@ -43,8 +45,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                                 p.flush()
                         p.close()
         except Exception as e:
-            print(str(e))
-            parse_child_page(url, child_num, proxies, True, try_time, request_time_out)
+            parse_child_page(url, child_num, proxies, True, try_time, request_time_out+5)
     else:
         if try_time < count_num:
             try:
@@ -68,10 +69,13 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                                     p.flush()
                             p.close()
             except Exception as e:
-                print(url + ' ----' + url_new + ' ---- ' + str(e))
-                parse_child_page(url, child_num, proxies, True, try_time + 1, request_time_out + 10)  # 只重采一次，增加重采时的超时时间
+                # print(url + ' ----' + url_new + ' ---- ' + str(e))
+                retry_time_out = request_time_out
+                if try_time + 1 == count_num:
+                    retry_time_out = request_time_out + 10
+                parse_child_page(url, child_num, proxies, True, try_time + 1, retry_time_out)  # 只重采一次，增加重采时的超时时间
         else:
-            print('无法下载')
+            pass
 
 
 class down_img_thread(Thread):
@@ -92,7 +96,7 @@ if __name__ == '__main__':
     pp = down_load_proxy()
     if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
         os.mkdir(local_dir)
-    for j in range(9189, 9306, 1):
+    for j in range(6900, 7200, 1):
         max_num = get_every_max(url, str(j))
         if max_num == 0:
             continue
@@ -113,4 +117,5 @@ if __name__ == '__main__':
             # parse_child_page()
         for t in threads:
             t.join()
-        print(time.clock() - start)
+        time.sleep(2)
+        print(url + str(j) + '/' + str(j) + '_1  '+str(time.clock() - start))
