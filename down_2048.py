@@ -10,10 +10,10 @@ from threading import Thread
 url = 'http://www.youzi4.cc/mm/'
 count_num = 3
 request_time_out = 10
-local_dir = 'F://ss'
+local_dir = 'D://ss'
 
 
-def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=0, request_time_out=10):
+def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=1, request_time_out=10):
     if url == '' or url is None:
         print('地址格式不符合')
         return
@@ -42,7 +42,8 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                                 p.write(chunk)
                                 p.flush()
                         p.close()
-        except:
+        except Exception as e:
+            print(str(e))
             parse_child_page(url, child_num, proxies, True, try_time, request_time_out)
     else:
         if try_time < count_num:
@@ -50,7 +51,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                 child_doc = requests.get(url_new, headers=headers, proxies=proxies, timeout=request_time_out).text
                 # time.sleep(random.randint(1, 3))
                 child_soup = BeautifulSoup(child_doc, "html.parser")
-                print('尝试次数==='+str(try_time)+child_soup.img)
+                print('尝试次数===' + str(try_time) + child_soup.img)
                 pic = str(child_soup.img.get('src'))
                 headers = {
                     'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
@@ -66,8 +67,9 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                                     p.write(chunk)
                                     p.flush()
                             p.close()
-            except:
-                parse_child_page(url, child_num, proxies, False, try_time + 1, request_time_out)
+            except Exception as e:
+                print(url + ' ----' + url_new + ' ---- ' + str(e))
+                parse_child_page(url, child_num, proxies, True, try_time + 1, request_time_out)
         else:
             print('无法下载')
 
@@ -90,16 +92,22 @@ if __name__ == '__main__':
     pp = down_load_proxy()
     if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
         os.mkdir(local_dir)
-    for j in range(8607, 9006, 1):
+    for j in range(9106, 9306, 1):
         max_num = get_every_max(url, str(j))
         if max_num == 0:
             continue
         start = time.clock()
+        # for i in range(1, max_num + 1):
+        #     proxies = {"http": pp[random.randint(0, len(pp) - 1)]}
+        #     parse_child_page(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False,
+        #                      request_time_out=10)
+        # print(time.clock() - start)
         threads = []
         for i in range(1, max_num + 1):
-            proxies = {"http": pp[random.randint(0, len(pp) - 1)]}
+            proxies = {
+                pp[random.randint(0, len(pp) - 1)].split('=')[0]: pp[random.randint(0, len(pp) - 1)].split('=')[1]}
             t = down_img_thread(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False,
-                             request_time_out=10)
+                                request_time_out=10)
             t.start()
             threads.append(t)
             # parse_child_page()
