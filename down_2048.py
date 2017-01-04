@@ -8,7 +8,7 @@ from down_proxy import down_load_proxy
 from threading import Thread
 
 url = 'http://www.youzi4.cc/mm/'
-count_num = 3
+count_num = 2
 request_time_out = 10
 local_dir = 'D://ss'
 
@@ -69,7 +69,7 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                             p.close()
             except Exception as e:
                 print(url + ' ----' + url_new + ' ---- ' + str(e))
-                parse_child_page(url, child_num, proxies, True, try_time + 1, request_time_out)
+                parse_child_page(url, child_num, proxies, True, try_time + 1, request_time_out + 10)  # 只重采一次，增加重采时的超时时间
         else:
             print('无法下载')
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     pp = down_load_proxy()
     if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
         os.mkdir(local_dir)
-    for j in range(9106, 9306, 1):
+    for j in range(9189, 9306, 1):
         max_num = get_every_max(url, str(j))
         if max_num == 0:
             continue
