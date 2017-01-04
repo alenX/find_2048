@@ -10,7 +10,7 @@ from threading import Thread
 url = 'http://www.youzi4.cc/mm/'
 count_num = 3
 request_time_out = 10
-local_dir = 'D://ss'
+local_dir = 'D://ss//dd'
 
 
 def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=1, request_time_out=10):
@@ -28,8 +28,6 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
             child_soup = BeautifulSoup(child_doc, "html.parser")
             print(child_soup.img)
             pic = str(child_soup.img.get('src'))
-            if pic.lower().endswith('.gif'):
-                return
             headers = {
                 'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
                 'Referer': 'http://www.youzi4.cc/'}
@@ -96,7 +94,7 @@ if __name__ == '__main__':
     pp = down_load_proxy()
     if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
         os.mkdir(local_dir)
-    for j in range(6900, 7200, 1):
+    for j in range(11600, 11696, 1):
         max_num = get_every_max(url, str(j))
         if max_num == 0:
             continue
@@ -118,4 +116,4 @@ if __name__ == '__main__':
         for t in threads:
             t.join()
         time.sleep(2)
-        print(url + str(j) + '/' + str(j) + '_1  '+str(time.clock() - start))
+        print(url + str(j) + '/' + str(j) + '_1.html  '+str(time.clock() - start))
