@@ -41,7 +41,6 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                             if chunk:
                                 p.write(chunk)
                                 p.flush()
-                        p.close()
         except Exception as e:
             parse_child_page(url, child_num, proxies, True, try_time, request_time_out+5)
     else:
@@ -65,7 +64,6 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                                 if chunk:
                                     p.write(chunk)
                                     p.flush()
-                            p.close()
             except Exception as e:
                 # print(url + ' ----' + url_new + ' ---- ' + str(e))
                 retry_time_out = request_time_out

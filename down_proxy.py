@@ -18,7 +18,6 @@ def down_load_proxy():
                 is_retry = False
                 continue
             ll.append(i[:-1])
-    pr.close()
     if not is_retry:
         return ll
     else:
@@ -42,7 +41,6 @@ def down_load_proxy():
                     of.write('%s=%s:%s\n' % (protocol, ip, port))
                     of.flush()
                     ll.append(ip + ":" + port)
-        of.close()
         return ll
 
 
