@@ -14,14 +14,16 @@ def down_load_proxy():
     is_retry = True
     with open('proxy.txt', 'r') as pr:
         for i in pr:
-            if i[:-1] == datetime.datetime.now().strftime('%x'):#每天只更新一次
+            if i[:-1] == datetime.datetime.now().strftime('%x'):  # 每天只更新一次
                 is_retry = False
+                continue
+            if i.strip() == '':
                 continue
             ll.append(i[:-1])
     if not is_retry:
         return ll
     else:
-        ll=[]
+        ll = []
     with open('proxy.txt', 'w') as of:
         of.write('%s\n' % (datetime.datetime.now().strftime('%x')))
         for page in range(2, 3):
