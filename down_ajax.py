@@ -33,5 +33,8 @@ class DownAjax(object):
 
 
 if __name__ == '__main__':
-    d = DownAjax('http://pub.alimama.com/promo/item/channel/index.htm?spm=a219t.7900221/1.1998910419.ddd06e75d.lVDGCk&channel=20k')
-    d.down_pages()
+    for i in range(2, 5):
+        d = DownAjax(
+            'http://pub.alimama.com/promo/item/channel/index.htm?spm=a219t.7900221/1.1998910419.ddd06e75d.lVDGCk&channel=20k&toPage=' + str(
+                i) + '&perPageSize=40')
+        d.down_pages()

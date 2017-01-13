@@ -2,6 +2,8 @@
 import requests, time
 import random
 import os
+import base64
+import pymongo
 from bs4 import BeautifulSoup
 from Utils import get_dir_size, get_every_max, user_agents
 from down_proxy import down_load_proxy
@@ -11,6 +13,9 @@ url = 'http://www.youzi4.cc/mm/'
 count_num = 3
 request_time_out = 10
 local_dir = 'D://ss//dd'
+client = pymongo.MongoClient("localhost", 27017)
+db = client['find_2048']
+info = db["bs64_info"]
 
 
 def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=1, request_time_out=10):
@@ -36,13 +41,15 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
             if r.status_code == 200:
                 if get_dir_size(local_dir) < 1000:
                     # print(pic)
-                    with open(local_dir + '//' + pic.split('/')[-1], "wb") as p:
+                    filename = local_dir + '//' + pic.split('/')[-1]
+                    with open(filename, "wb") as p:
                         for chunk in r.iter_content(chunk_size=1024):
                             if chunk:
                                 p.write(chunk)
                                 p.flush()
         except Exception as e:
-            parse_child_page(url, child_num, proxies, True, try_time, request_time_out+5)
+            print(e)
+            parse_child_page(url, child_num, proxies, True, try_time, request_time_out + 5)
     else:
         if try_time < count_num:
             try:
@@ -59,7 +66,8 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                 if r.status_code == 200:
                     if get_dir_size(local_dir) < 60000:
                         # print(pic)
-                        with open(local_dir + '//' + pic.split('/')[-1], "wb") as p:
+                        filename = local_dir + '//' + pic.split('/')[-1]
+                        with open(filename, "wb") as p:
                             for chunk in r.iter_content(chunk_size=1024):
                                 if chunk:
                                     p.write(chunk)
@@ -92,7 +100,7 @@ if __name__ == '__main__':
     pp = down_load_proxy()
     if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
         os.mkdir(local_dir)
-    for j in range(11600, 11696, 1):
+    for j in range(11650, 11652, 1):
         max_num = get_every_max(url, str(j))
         if max_num == 0:
             continue
@@ -114,4 +122,13 @@ if __name__ == '__main__':
         for t in threads:
             t.join()
         time.sleep(2)
-        print(url + str(j) + '/' + str(j) + '_1.html  '+str(time.clock() - start))
+        print(url + str(j) + '/' + str(j) + '_1.html  ' + str(time.clock() - start))
+    # 将文件使用bs64写入数据库
+    for each_file in os.listdir(local_dir):
+        print(local_dir)
+        if os.path.isfile(os.path.join(local_dir,each_file)):
+            with open(local_dir + "//"+each_file, "rb") as p_p:
+                mongo_pic = {'title': each_file, 'bs64': base64.b64encode(p_p.read())}
+                if not info.find_one({'title': each_file}):
+                    info.insert(mongo_pic)
+    client.close()
