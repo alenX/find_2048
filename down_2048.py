@@ -12,7 +12,7 @@ from threading import Thread
 url = 'http://www.youzi4.cc/mm/'
 count_num = 3
 request_time_out = 10
-local_dir = 'D://ss//dd'
+local_dir = '/home/wangss/pic'
 client = pymongo.MongoClient("localhost", 27017)
 db = client['find_2048']
 info = db["bs64_info"]
@@ -112,8 +112,9 @@ if __name__ == '__main__':
         # print(time.clock() - start)
         threads = []
         for i in range(1, max_num + 1):
+            s_num = random.randint(0, len(pp) - 1)
             proxies = {
-                pp[random.randint(0, len(pp) - 1)].split('=')[0]: pp[random.randint(0, len(pp) - 1)].split('=')[1]}
+                pp[s_num].split('=')[0]: pp[s_num].split('=')[1]}
             t = down_img_thread(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False,
                                 request_time_out=10)
             t.start()
@@ -126,8 +127,8 @@ if __name__ == '__main__':
     # 将文件使用bs64写入数据库
     for each_file in os.listdir(local_dir):
         print(local_dir)
-        if os.path.isfile(os.path.join(local_dir,each_file)):
-            with open(local_dir + "//"+each_file, "rb") as p_p:
+        if os.path.isfile(os.path.join(local_dir, each_file)):
+            with open(local_dir + "//" + each_file, "rb") as p_p:
                 mongo_pic = {'title': each_file, 'bs64': base64.b64encode(p_p.read())}
                 if not info.find_one({'title': each_file}):
                     info.insert(mongo_pic)
