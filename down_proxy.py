@@ -31,9 +31,6 @@ def down_load_proxy():
             doc = requests.get(url, headers=headers, timeout=5).text
             soup = BeautifulSoup(doc, "html.parser")
             trs = soup.find('table', {"id": "ip_list"}).findAll('tr')
-            # print(trs[1:][0].findAll('td')[5])
-            # print(trs[1:][0].findAll('td')[1])
-            # print(trs[1:][0].findAll('td')[2])
             for tr in trs[1:]:
                 tds = tr.findAll('td')
                 ip = tds[1].text.strip()

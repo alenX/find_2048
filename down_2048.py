@@ -14,8 +14,16 @@ count_num = 3
 request_time_out = 10
 local_dir = '/home/wangss/pic'
 client = pymongo.MongoClient("localhost", 27017)
+rf = 'www.baidu.com'
 db = client['find_2048']
 info = db["bs64_info"]
+
+from fake_useragent import UserAgent
+
+
+def get_user_agent():
+    ua = UserAgent()
+    return ua.random
 
 
 def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time=1, request_time_out=10):
@@ -24,8 +32,8 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
         return
     url_new = url + str(child_num) + '.html'
     headers = {
-        'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
-        'Referer': 'http://www.youzi4.cc/'}
+        'User-Agent': get_user_agent(),
+        'Referer': rf}
     if not proxy_flag:
         try:
             child_doc = requests.get(url_new, headers=headers, timeout=request_time_out).text
@@ -34,8 +42,8 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
             print(child_soup.img)
             pic = str(child_soup.img.get('src'))
             headers = {
-                'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
-                'Referer': 'http://www.youzi4.cc/'}
+                'User-Agent': get_user_agent(),
+                'Referer': rf}
             r = requests.get(pic, headers=headers, timeout=request_time_out)
             # time.sleep(random.randint(1, 3))
             if r.status_code == 200:
@@ -59,8 +67,8 @@ def parse_child_page(url='', child_num=2, proxies={}, proxy_flag=False, try_time
                 print('尝试次数===' + str(try_time) + child_soup.img)
                 pic = str(child_soup.img.get('src'))
                 headers = {
-                    'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
-                    'Referer': 'http://www.youzi4.cc/'}
+                    'User-Agent': get_user_agent(),
+                    'Referer': rf}
                 r = requests.get(pic, headers=headers, proxies=proxies, timeout=request_time_out)
                 # time.sleep(random.randint(1, 3))
                 if r.status_code == 200:
@@ -96,11 +104,13 @@ class down_img_thread(Thread):
                          request_time_out=self.request_time_out)
 
 
+from multiprocessing import Pool
+
 if __name__ == '__main__':
     pp = down_load_proxy()
     if not os.path.exists(local_dir):  # 判断是否存在，如果不存在那么新建
         os.mkdir(local_dir)
-    for j in range(11650, 11652, 1):
+    for j in range(11660, 11792, 1):
         max_num = get_every_max(url, str(j))
         if max_num == 0:
             continue
@@ -112,9 +122,10 @@ if __name__ == '__main__':
         # print(time.clock() - start)
         threads = []
         for i in range(1, max_num + 1):
-            s_num = random.randint(0, len(pp) - 1)
+            pr = random.choice(pp)
+            print(pr)
             proxies = {
-                pp[s_num].split('=')[0]: pp[s_num].split('=')[1]}
+                pr.split('=')[0]: pr.split('=')[1]}
             t = down_img_thread(url=url + str(j) + '/' + str(j) + '_', child_num=i, proxies=proxies, proxy_flag=False,
                                 request_time_out=10)
             t.start()
@@ -126,7 +137,7 @@ if __name__ == '__main__':
         print(url + str(j) + '/' + str(j) + '_1.html  ' + str(time.clock() - start))
     # 将文件使用bs64写入数据库
     for each_file in os.listdir(local_dir):
-        print(local_dir)
+        # print(local_dir)
         if os.path.isfile(os.path.join(local_dir, each_file)):
             with open(local_dir + "//" + each_file, "rb") as p_p:
                 mongo_pic = {'title': each_file, 'bs64': base64.b64encode(p_p.read())}
